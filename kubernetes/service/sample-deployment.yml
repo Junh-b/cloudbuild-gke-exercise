@@ -29,7 +29,7 @@ spec:
               weight: 100
       containers:
         - name: sample-app
-          image: gcr.io/cnaps-project/book
+          image: gcr.io/spry-effect-328412/sample-app
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod

@@ -5,6 +5,7 @@ steps:
       - 'configure-docker'
   - name: gradle:7
     args:
+      - 'gradle'
       - 'jib'
       - '-x'
       - 'test'

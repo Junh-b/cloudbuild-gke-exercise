@@ -1,23 +1,28 @@
 steps:
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - id: configure docker
+    name: gcr.io/cloud-builders/gcloud
     args:
-      - 'auth'
-      - 'configure-docker'
-  - name: gradle:7
+      - auth
+      - configure-docker
+  - id: build app with jib
+    name: gradle:7
+    entrypoint: bash
     args:
-      - 'gradle'
-      - 'jib'
-      - '-x'
-      - 'test'
+      - -c
+      - |
+        curl -fsSL "https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.10/docker-credential-gcr_linux_amd-2.1.0.tar.gz"\
+        | tar xz --to-stdout ./docker-credential-gcr > /usr/local/bin/docker-credential-gcr && chmod +x /usr/local/bin/docker-credential-gcr
+        | gradle jib -x test
     env:
-      - 'PROJECT_ID=$PROJECT_ID'
-      - 'IMAGE_NAME=sample_app'
-  - name: 'gcr.io/$PROJECT_ID/kustomize'
+      - PROJECT_ID=$PROJECT_ID
+      - IMAGE_NAME=sample_app
+  - id: deploy to gke
+    name: gcr.io/$PROJECT_ID/kustomize
     args:
-      - 'build'
-      - 'kubernetes/service'
+      - build
+      - kubernetes/service
     env:
-      - 'APPLY=true'
-      - 'CLOUDSDK_COMPUTE_ZONE=asia-northeast1'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=sample-cluster'
-      - 'GCLOUD_PROJECT=$PROJECT_ID'
+      - APPLY=true
+      - CLOUDSDK_COMPUTE_ZONE=asia-northeast1
+      - CLOUDSDK_CONTAINER_CLUSTER=sample-cluster
+      - GCLOUD_PROJECT=$PROJECT_ID

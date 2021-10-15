@@ -10,21 +10,23 @@ steps:
       - IMAGE_NAME=sample_app
     args:
       - '-c'
-      - >
+      - >-
         curl -SL
-        "https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.1.0/docker-credential-gcr_linux_amd64-2.1.0.tar.gz" --output docker-credential-gcr.tar.gz  \
-        && tar -xz -f ./docker-credential-gcr.tar.gz docker-credential-gcr \
-        && mv ./docker-credential-gcr /usr/local/bin/docker-credential-gcr  \
-        && chmod +x /usr/local/bin/docker-credential-gcr && gradle jib -x test
+        "https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.1.0/docker-credential-gcr_linux_amd64-2.1.0.tar.gz"
+        --output docker-credential-gcr.tar.gz  && tar -xz -f
+        ./docker-credential-gcr.tar.gz docker-credential-gcr && mv
+        ./docker-credential-gcr /usr/local/bin/docker-credential-gcr && chmod +x
+        /usr/local/bin/docker-credential-gcr && gradle jib -x test
     id: build app with jib
     entrypoint: bash
-  - name: gcr.io/cloud-builders-community/kustomize
+  - name: gcr.io/cloud-builders/gke-deploy
     env:
-      - APPLY=true
       - CLOUDSDK_COMPUTE_ZONE=asia-northeast1
       - CLOUDSDK_CONTAINER_CLUSTER=sample-cluster
       - GCLOUD_PROJECT=$PROJECT_ID
     args:
-      - build
-      - ./kubernetes/service
+      - run
+      - '--filename=./kubernetes/service'
+      - '--location=$$CLOUDSDK_COMPUTE_ZONE'
+      - '--cluster=$$CLOUDSDK_CONTAINER_CLUSTER'
     id: deploy to gke

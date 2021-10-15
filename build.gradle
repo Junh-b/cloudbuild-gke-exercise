@@ -36,7 +36,7 @@ jib {
         image = 'adoptopenjdk:11-jre'
     }
     to {
-        image = 'gcr.io/${System.env.PROJECT_ID}/${System.env.IMAGE_NAME}'
+        image = "gcr.io/${System.getenv('PROJECT_ID')}/${System.getenv('IMAGE_NAME')}"
         credHelper = 'gcr'
         tags = ['latest']
     }

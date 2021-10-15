@@ -1,13 +1,13 @@
 steps:
   - name: 'gcr.io/cloud-builders/gcloud'
-  args:
-    - 'auth'
-    - 'configure-docker'
+    args:
+      - 'auth'
+      - 'configure-docker'
   - name: 'gcr.io/cloud-builders/gradle'
     args:
       - 'jib'
-  - '-x'
-  - 'test'
+      - '-x'
+      - 'test'
     env:
       - 'PROJECT_ID=$PROJECT_ID'
       - 'IMAGE_NAME=sample_app'

@@ -10,7 +10,7 @@ steps:
     args:
       - -c
       - |
-        curl -fsSL "https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.10/docker-credential-gcr_linux_amd-2.1.0.tar.gz"\
+        curl -fsSL "https://github.com/GoogleCloudPlatform/docker-credential-gcr/releases/download/v2.10/docker-credential-gcr_linux_amd64-2.1.0.tar.gz"\
         | tar xz --to-stdout ./docker-credential-gcr > /usr/local/bin/docker-credential-gcr && chmod +x /usr/local/bin/docker-credential-gcr
         | gradle jib -x test
     env:

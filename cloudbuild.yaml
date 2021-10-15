@@ -3,7 +3,7 @@ steps:
     args:
       - 'auth'
       - 'configure-docker'
-  - name: 'gcr.io/cloud-builders/gradle'
+  - name: 'gcr.io/cloud-builders/gradle:latest'
     args:
       - 'jib'
       - '-x'

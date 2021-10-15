@@ -1,0 +1,48 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.5'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.1.4'
+    id 'java'
+}
+
+group = 'net.junhabaek'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.5.5'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = 'adoptopenjdk:11-jre'
+    }
+    to {
+        image = 'gcr.io/${System.env.PROJECT_ID}/${System.env.IMAGE_NAME}'
+        credHelper = 'gcr'
+        tags = ['latest']
+    }
+    container {
+        jvmFlags = ['-DSpring.profiles.active=dev', '-Xms256m']
+        ports = ['8082', '2000-2003/udp']
+        format = 'OCI'
+    }
+}

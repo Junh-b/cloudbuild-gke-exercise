@@ -1,0 +1,22 @@
+steps:
+  - name: 'gcr.io/cloud-builders/gcloud'
+  args:
+    - 'auth'
+    - 'configure-docker'
+  - name: 'gcr.io/cloud-builders/gradle'
+    args:
+      - 'jib'
+  - '-x'
+  - 'test'
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'IMAGE_NAME=sample_app'
+  - name: 'gcr.io/$PROJECT_ID/kustomize'
+    args:
+      - 'build'
+      - 'kubernetes/service'
+    env:
+      - 'APPLY=true'
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-northeast1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=sample-cluster'
+      - 'GCLOUD_PROJECT=$PROJECT_ID'

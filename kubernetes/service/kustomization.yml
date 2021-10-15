@@ -1,0 +1,3 @@
+resources:
+  - kubernetes/sample-deployment.yml
+  - kubernetes/sample-service.yml

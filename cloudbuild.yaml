@@ -21,12 +21,23 @@ steps:
     entrypoint: bash
   - name: gcr.io/cloud-builders/gke-deploy
     env:
-      - CLOUDSDK_COMPUTE_ZONE=asia-northeast1
-      - CLOUDSDK_CONTAINER_CLUSTER=sample-cluster
+      - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
       - GCLOUD_PROJECT=$PROJECT_ID
+      - KUBECONFIG=/kube/config
     args:
-      - run
-      - '--filename=./kubernetes/service'
-      - '--location=$$CLOUDSDK_COMPUTE_ZONE'
-      - '--cluster=$$CLOUDSDK_CONTAINER_CLUSTER'
+      - '-c'
+      - |
+        CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}
+        ZONE=${_CLOUDSDK_COMPUTE_ZONE}
+        PROJECT=$$(gcloud config get-value core/project)
+        gcloud container clusters get-credentials "$${CLUSTER}" \
+        --project $${PROJECT} --zone "$${ZONE}" \
+        && kubectl apply -f kubernetes/service
     id: deploy to gke
+    entrypoint: bash
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _CLOUDSDK_COMPUTE_ZONE: asia-northeast1-a
+  _CLOUDSDK_CONTAINER_CLUSTER: sample-cluster
